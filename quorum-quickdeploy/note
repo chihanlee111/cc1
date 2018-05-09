@@ -1,0 +1,108 @@
+
+
+
+
+add new node
+=================
+bootnode -genkey bootnode.key
+
+==================Account key gen
+geth account new
+
+==================
+constellation-node --generatekeys tmi
+
+
+
+
+
+=============================GCP ip
+
+ip addr show eth0 | grep "inet\b" | awk '{print $2}' | cut -d/ -f1
+
+
+
+kubectl get pod -o wide| grep "inet\b"|awk '{print $6}'
+
+kubectl get svc nodesvc1  -o jsonpath= '{Status.loadBalancer.ingress[0].ip}'
+
+
+kubectl get svc nodesvc1 |awk 'NR>1 {print $4}' 
+											///can use
+
+
+
+============================ pod update
+
+連接第n個node :
+		
+ccc.sh---------------------------
+
+read -p "Enter node number: " nodenum
+
+read -p "Enter Command : " command
+
+kubectl exec -it  $(kubectl get pods --selector=node=node1|  awk 'NR>1 {print $1}') command
+
+---------------------------------
+
+
+#kubectl copy file
+
+
+kubectl cp <some-namespace>/<some-pod>:/quorum/Docker/7nodes /tmp/bar
+
+
+---------------------------------
+
+
+kubectl get svc --selector=node=node1
+===========================
+constellation 
+
+pod 內ip 
+				:get pod with service selector:
+				:kubectl get pods --selector=node=node1|  awk 'NR>1 {print $1}' 
+ 				: ip addr show eth0 | grep "inet\b" | awk '{print $2}' | cut -d/ -f1
+
+=====
+
+othernode ip
+				:
+
+
+
+permission Node
+
+#1.	:mount local volumn
+#2	: by internet
+
+修改 /quorum/Docker/qdata/dd{$i}/static-nodes.json
+
+All file
+
+
+pod 內執行 script
+run-quorum.sh
+
+kubectl exec -it chmod 777 run-quorum.sh && ./run-quorum.sh
+
+
+
+
+
+
+
+kubectl exec node1-f57cbcbd5-wbsw6 -- bash -c "source quorum/Docker/7nodes/run-quorum.sh 2 10.11.11.11 10.11.1.1
+"
+
+
+
+
+source quorum/Docker/7nodes/run-quorum.sh 2 10.11.11.11 10.11.1.1
+
+
+kubectl exec $(kubectl get pods --selector=node=node$nodenum|  awk 'NR>1 {print $1}') -- bash -c "cd quorum/Docker/7nodes &&source run-quorum.sh 2 10.11.11.11 10.11.1.1"
+
+
+

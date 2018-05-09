@@ -1,0 +1,28 @@
+#!/bin/bash
+NODENUM=$1
+IPADDR=$2
+OTHERIP=$3
+
+echo "
+set -u
+set -e
+
+DDIR=\"qdata/c$NODENUM\"
+mkdir -p $DDIR
+mkdir -p qdata/logs
+cp 'keys/tm$NODENUM.pub' '$DDIR/tm.pub'
+cp 'keys/tm$NODENUM.key' '$DDIR/tm.key'
+rm -f '$DDIR/tm.ipc'
+CMD='constellation-node --url=https://$IPADDR:900$NODENUM/ --port=900$NODENUM --workdir=$DDIR --socket=tm.ipc --publickeys=tm.pub --privatekeys=tm.key --othernodes=https://OTHERIP:9001/'
+echo '$CMD >> qdata/logs/constellation$NODENUM.log 2>&1 &'
+$CMD >> 'qdata/logs/constellation$NODENUM.log' 2>&1 &
+
+DOWN=true
+while $DOWN; do
+    sleep 0.1
+    DOWN=false
+	if [ ! -S 'qdata/c$NODENUM/tm.ipc' ]; then
+            DOWN=true
+	fi
+done" > constellation-start.sh
+chmod 777 constellation-start.sh
